@@ -8,8 +8,8 @@ local blightDiseases = {
     "ash woe blight"
 }
 
-local function infectPlayer(player)
-    -- собираем список болезней, которыми игрок еще не болен
+local function checkDiseases(player)
+    -- —обираем список болезней, которыми персонаж еще не болен
     local availableDiseases = {}
 
 	for _, id in ipairs(blightDiseases) do
@@ -17,22 +17,33 @@ local function infectPlayer(player)
 			table.insert(availableDiseases, id)
 		end
 	end
-
-    -- если есть болезни, которыми игрок еще не заражен
+	
+	-- ¬ыбираем случайно одну из отсутствующих болезней
+	local diseaseObj
     if #availableDiseases > 0 then
         local diseaseID = availableDiseases[math.random(#availableDiseases)]
-		local diseaseObj = tes3.getObject(diseaseID)
+		diseaseObj = tes3.getObject(diseaseID)
+	end
+	
+	return diseaseObj
+end
 
-        if diseaseObj then
-            -- ѕрименение болезни
-            tes3.addSpell({ reference = player, spell = diseaseObj })
-			
-			tes3.messageBox(
-			"¬ы заразились моровой болезнью: %s",
-			diseaseObj.name
-			)
-		end
-    end
+local function onInfection(diseaseObj)
+	tes3.messageBox(
+		"¬ы заразились моровой болезнью: %s",
+		diseaseObj.name
+	)
+end
+
+local function infectPlayer(player)
+	-- »щем болезнь, которой еще нет у персонажа
+	local diseaseObj = checkDiseases(player)
+	
+	-- ѕримен€ем болезнь к персонажу
+    if diseaseObj then
+        tes3.addSpell({ reference = player, spell = diseaseObj })
+		onInfection(diseaseObj)
+	end
 end
 
 local function calculateHelmetMultiplier(player)
@@ -80,7 +91,7 @@ function blight.checkBlightInfection()
     -- 1. ѕроверка: закончен ли мейнквест (ƒагот ”р побежден)
     if tes3.getJournalIndex{id = "C3_DestroyDagoth"} >= 50 then return end
 
-    -- 2. ѕроверка: находитс€ ли игрок на улице
+    -- 2. ѕроверка: находитс€ ли персонаж на улице
 	local cell = tes3.getPlayerCell()
 	if not cell or cell.isInterior then return end
 
@@ -103,7 +114,7 @@ function blight.checkBlightInfection()
     local roll = math.random() * 100
 	onAttemptedInfection(finalChance, roll)
 
-	-- 7. ≈сли попали в шанс - заражаем игрока
+	-- 7. ≈сли попали в шанс - заражаем персонажа
     if roll <= finalChance then
 		infectPlayer(player)
     end

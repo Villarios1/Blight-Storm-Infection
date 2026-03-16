@@ -40,7 +40,7 @@ local function registerModConfig()
         label = "Интервал проверки в секундах",
         description = "Как часто скрипт проверяет шанс заражения.",
         min = 1,
-        max = 180,
+        max = 120,
         step = 1,
         jump = 5,
         variable = mwse.mcm.createTableVariable{ id = "duration", table = config }
@@ -67,7 +67,14 @@ local function registerModConfig()
         variable = mwse.mcm.createTableVariable{ id = "blightStormEndNotificationText", table = config }
     })
 
-	-- 7. Кнопка сброса настроек
+	-- 7. Включение/выключение попыток заражения
+    category:createYesNoButton({
+        label = "Отображение попыток заражения",
+        description = "Отображать шанс и результат проверки на заражение при каждой попытке заразить персонажа.",
+        variable = mwse.mcm.createTableVariable{ id = "displayInfectionAttemps", table = config }
+    })
+
+	-- 8. Кнопка сброса настроек
 	category:createButton({
         label = "Восстановить настройки по умолчанию",
         buttonText = "Сбросить",
@@ -78,7 +85,7 @@ local function registerModConfig()
                 config[key] = value
             end
 			
-            tes3.messageBox("Настройки сброшены. Перезапустите это меню для обновления изменений.")
+            tes3.messageBox("Настройки сброшены. Перезапустите это меню для отображения изменений.")
         end
     })
 

@@ -59,7 +59,9 @@ local function checkBlightInfection()
     local finalChance = baseChance * (1 - (resist / 100)) * helmetMultiplier
     local roll = math.random() * 100
 
--- tes3.messageBox("Шанс: %.2f, Ролл: %d", finalChance, roll)
+	if config.displayInfectionAttemps then 
+		tes3.messageBox("Шанс: %.2f, Бросок: %d", finalChance, roll)
+	end
 
     if roll <= finalChance then
         -- 6. Если попали в шанс, выбираем одну из болезней

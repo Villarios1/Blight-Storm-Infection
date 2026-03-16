@@ -3,7 +3,7 @@ local config = require("BlightStormInfection.config")
 local function registerModConfig()
     local template = mwse.mcm.createTemplate("Blight Storm Infection")
 	
-	-- При закрытии сохраняем файл JSON и кидаем сигнал чтобы main.lua обновил таймер
+	-- При закрытии сохраняем файл JSON и кидаем сигнал чтобы timer.lua обновил таймер
     template.onClose = function()
 		mwse.saveConfig("BlightStormInfection", config)
         event.trigger("BlightStormInfection:UpdateTimer")
@@ -26,7 +26,7 @@ local function registerModConfig()
     -- 2. Множитель шлема
     category:createSlider({
         label = "Множитель закрытого шлема",
-        description = "Шанс будет умножен на это значение, если надет закрытый шлем (полностью заменяющий часть тела head).",
+        description = "Шанс будет умножен на это значение, если надет закрытый шлем (полностью заменяющий часть тела head). Множитель 1.00 - шанс заражения остается базовый.",
 		min = 0,
         max = 1,
         step = 0.01,
@@ -71,7 +71,7 @@ local function registerModConfig()
     category:createYesNoButton({
         label = "Отображение попыток заражения",
         description = "Отображать шанс и результат проверки на заражение при каждой попытке заразить персонажа.",
-        variable = mwse.mcm.createTableVariable{ id = "displayInfectionAttemps", table = config }
+        variable = mwse.mcm.createTableVariable{ id = "displayInfectionAttempts", table = config }
     })
 
 	-- 8. Кнопка сброса настроек

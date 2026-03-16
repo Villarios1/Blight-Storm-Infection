@@ -7,7 +7,7 @@ local defaultConfig = {
 	showWeatherNotifications = true, -- оповещение о начале моровой бури
 	blightStormStartNotificationText = "Воздух наполняется пеплом и заразой. Начинается моровая буря.",
 	blightStormEndNotificationText = "Небо проясняется, и дышать становится легче. Моровая буря наконец утихла.",
-	displayInfectionAttemps = false
+	displayInfectionAttemps = false -- отображать попытки заражения
 }
 
 local config = mwse.loadConfig(configPath, defaultConfig)

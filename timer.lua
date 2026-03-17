@@ -1,5 +1,6 @@
 local config = require("BlightStormInfection.config")
 local blight = require("BlightStormInfection.blight")
+require("BlightStormInfection.mcm")
 
 local infectionTimer = nil
 
@@ -24,5 +25,3 @@ event.register("loaded", startInfectionTimer)
 
 -- Обновляем таймер по запросу из MCM после сохранения настроек
 event.register("BlightStormInfection:UpdateTimer", startInfectionTimer)
--- Выполняем MCM в самом конце, чтобы вызванное им событие видело функцию таймера
-require("BlightStormInfection.mcm")

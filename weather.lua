@@ -18,6 +18,7 @@ local function blightNotification(event)
 		end
 	end
 
+	if not tes3.getCurrentWeather() then return end -- например при старте новой игры после уже загруженной
 	local isBlight = (tes3.getCurrentWeather().index == tes3.weather.blight)
 
 	if wasBlight and not isBlight then -- Погода сменилась с бури на что-то другое

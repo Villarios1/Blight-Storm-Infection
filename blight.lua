@@ -17,14 +17,14 @@ local function checkDiseases(player)
 			table.insert(availableDiseases, id)
 		end
 	end
-	
+
 	-- ¬ыбираем случайно одну из отсутствующих болезней
 	local diseaseObj
     if #availableDiseases > 0 then
         local diseaseID = availableDiseases[math.random(#availableDiseases)]
 		diseaseObj = tes3.getObject(diseaseID)
 	end
-	
+
 	return diseaseObj
 end
 
@@ -38,7 +38,7 @@ end
 local function infectPlayer(player)
 	-- »щем болезнь, которой еще нет у персонажа
 	local diseaseObj = checkDiseases(player)
-	
+
 	-- ѕримен€ем болезнь к персонажу
     if diseaseObj then
         tes3.addSpell({ reference = player, spell = diseaseObj })
@@ -54,11 +54,11 @@ local function calculateHelmetMultiplier(player)
         objectType = tes3.objectType.armor, 
         slot = tes3.armorSlot.helmet 
     })
-	
+
     if not equippedHelmet then 
 		return helmetMultiplier
 	end
-	
+
     local armor = equippedHelmet.object
     -- ≈сли в шлеме прописана часть тела "Head", он считаетс€ закрытым.
     if armor.parts then
@@ -69,7 +69,7 @@ local function calculateHelmetMultiplier(player)
             end
         end
     end
-	
+
 	return helmetMultiplier
 end
 
@@ -84,7 +84,7 @@ local blight = {}
 function blight.checkBlightInfection()
     local player = tes3.player
 	if not player then return end
-	
+
     local mobile = tes3.mobilePlayer
 	if not mobile then return end
 

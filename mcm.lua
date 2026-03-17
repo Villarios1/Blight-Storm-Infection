@@ -2,7 +2,7 @@ local config = require("BlightStormInfection.config")
 
 local function registerModConfig()
     local template = mwse.mcm.createTemplate("Blight Storm Infection")
-	
+
 	-- При закрытии сохраняем файл JSON и кидаем сигнал чтобы timer.lua обновил таймер
     template.onClose = function()
 		mwse.saveConfig("BlightStormInfection", config)
@@ -45,7 +45,7 @@ local function registerModConfig()
         jump = 5,
         variable = mwse.mcm.createTableVariable{ id = "duration", table = config }
     })
-	
+
 	-- 4. Включение/выключение оповещений
     category:createYesNoButton({
         label = "Включить оповещения о буре",
@@ -59,7 +59,7 @@ local function registerModConfig()
         description = "Введите текст, который будет отображаться при начале моровой бури.",
         variable = mwse.mcm.createTableVariable{ id = "blightStormStartNotificationText", table = config }
     })
-	
+
 	-- 6. Текст оповещения об окончании моровой бури
 	category:createTextField({
         label = "Текст завершения бури:",
@@ -80,11 +80,9 @@ local function registerModConfig()
         buttonText = "Сбросить",
 		description = "Чтобы увидеть изменения потребуется перезапустить это меню.",
         callback = function()
-            -- Циклом перезаписываем значения в текущей таблице config
             for key, value in pairs(config.defaultConfig) do
                 config[key] = value
             end
-			
             tes3.messageBox("Настройки сброшены. Перезапустите это меню для отображения изменений.")
         end
     })

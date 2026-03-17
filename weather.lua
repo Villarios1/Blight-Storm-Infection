@@ -2,6 +2,14 @@
 
 local config = require("BlightStormInfection.config")
 
+local function onBlightStart()
+	tes3.messageBox(config.blightStormStartNotificationText)
+end
+
+local function onBlightFinish()
+	tes3.messageBox(config.blightStormEndNotificationText)
+end
+
 local wasBlight = false -- Храним состояние: была ли буря в прошлый раз, когда мы проверяли
 
 -- Функция для проверки состояния и вывода сообщения
@@ -11,9 +19,9 @@ local function blightNotification(event)
 	--weatherTransitionStarted only
 	if (event.eventType == "weatherTransitionStarted") then
 		local nextBlight = (event.to.index == tes3.weather.blight)
-		
+
 		if not wasBlight and nextBlight then -- Погода меняется на бурю
-			tes3.messageBox(config.blightStormStartNotificationText)
+			onBlightStart()
 			return
 		end
 	end
@@ -22,11 +30,11 @@ local function blightNotification(event)
 	local isBlight = (tes3.getCurrentWeather().index == tes3.weather.blight)
 
 	if wasBlight and not isBlight then -- Погода сменилась с бури на что-то другое
-		tes3.messageBox(config.blightStormEndNotificationText)
-		wasBlight = false		
+		onBlightFinish()
+		wasBlight = false
 		return
 	end
-	
+
 	--weatherTransitionFinished only
 	if (event.eventType == "weatherTransitionFinished") then
 		if not wasBlight and isBlight then -- Погода сменилась на бурю
@@ -34,11 +42,11 @@ local function blightNotification(event)
 			return
 		end
 	end
-	
+
 	--cellChanged only
 	if (event.eventType == "cellChanged") then
 		if not wasBlight and isBlight then -- В новой ячейке появилась буря
-			tes3.messageBox(config.blightStormStartNotificationText)
+			onBlightStart()
 			wasBlight = true
 			return
 		end

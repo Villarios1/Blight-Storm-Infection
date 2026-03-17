@@ -10,8 +10,11 @@
 ## **Установка:**
 Разместите файлы .lua в Morrowind\Data Files\mwse\mods\BlightStormInfection (создайте папку BlightStormInfection).
 
-## **Зависимости:**
+### **Зависимости:**
 Наверняка для работы необходим MWSE и Morrowind.
+
+## **Удаление**
+Удалите папку Morrowind\Data Files\mwse\mods\BlightStormInfection и файл Morrowind\Data Files\mwse\config\BlightStormInfection.JSON
 
 ## **Дополнительно**
 Файлы в кодировке Windows-1251 чтобы в игре правильно отображался текст на русском языке.

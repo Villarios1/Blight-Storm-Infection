@@ -1,21 +1,25 @@
 -- ƒанный модуль отслеживает изменени€ погоды, касающихс€ моровых бурь, и вызывает уведомлени€ из config
-
 local config = require("BlightStormInfection.config")
 
 local function onBlightStart()
-	tes3.messageBox(config.blightStormStartNotificationText)
+	tes3.messageBox(config.weather.blightStormStartNotificationText)
 end
 
 local function onBlightFinish()
-	tes3.messageBox(config.blightStormEndNotificationText)
+	tes3.messageBox(config.weather.blightStormEndNotificationText)
 end
 
-local wasBlight = false -- ’раним состо€ние: была ли бур€ в прошлый раз, когда мы провер€ли
+local function checkIsBlight()
+	if not tes3.getCurrentWeather() then -- например при старте новой игры после уже загруженной
+		return false
+	end
+	return tes3.getCurrentWeather().index == tes3.weather.blight
+end
+
+local wasBlight = false -- ’ранит текущее состо€ние бури после обработки событи€
 
 -- ‘ункци€ дл€ проверки состо€ни€ и вывода сообщени€
 local function blightNotification(event)
-    if not config.showWeatherNotifications then return end
-
 	--weatherTransitionStarted only
 	if (event.eventType == "weatherTransitionStarted") then
 		local nextBlight = (event.to.index == tes3.weather.blight)
@@ -26,8 +30,7 @@ local function blightNotification(event)
 		end
 	end
 
-	if not tes3.getCurrentWeather() then return end -- например при старте новой игры после уже загруженной
-	local isBlight = (tes3.getCurrentWeather().index == tes3.weather.blight)
+	local isBlight = checkIsBlight()
 
 	if wasBlight and not isBlight then -- ѕогода сменилась с бури на что-то другое
 		onBlightFinish()
@@ -53,21 +56,40 @@ local function blightNotification(event)
 	end
 end
 
--- 1. ѕри смене погоды
-local function onWeatherTransition(event)
-	blightNotification(event)
-end
-event.register(tes3.event.weatherTransitionStarted, onWeatherTransition)
-event.register(tes3.event.weatherTransitionFinished, onWeatherTransition)
+local isRegistered = false -- защита от повторной регистрации
+local weather = {}
 
--- 2. ѕри смене €чейки: загрузка сохранени€, телепортаци€, переход между локаци€ми
-local function onCellChanged(event)
-    blightNotification(event)
-end
-event.register(tes3.event.cellChanged, onCellChanged)
+function weather.enable()
+	if isRegistered then return end
+	if not config.weather.showWeatherNotifications then return end
 
--- 3. ѕри каждой загрузке сохранени€ - обнул€ем состо€ние прошлой бури
-local function onLoaded(event)
-	wasBlight = false
+	isRegistered = true --сразу на случай частичной регистрации
+
+	wasBlight = checkIsBlight()
+
+	-- 1. ѕри смене погоды
+	event.register(tes3.event.weatherTransitionStarted, blightNotification)
+	event.register(tes3.event.weatherTransitionFinished, blightNotification)
+	-- 2. ѕри смене €чейки: загрузка сохранени€, телепортаци€, переход между локаци€ми
+	event.register(tes3.event.cellChanged, blightNotification)
+
+	-- 3. ѕри каждой загрузке сохранени€ - обнул€ем состо€ние прошлой бури
+	local function onLoaded()
+		wasBlight = false
+	end
+	event.register(tes3.event.load, onLoaded)
 end
-event.register(tes3.event.load, onLoaded)
+
+function weather.disable()
+	if not isRegistered then return end
+
+	event.unregister(tes3.event.weatherTransitionStarted, blightNotification)
+	event.unregister(tes3.event.weatherTransitionFinished, blightNotification)
+	event.unregister(tes3.event.cellChanged, blightNotification)
+
+	isRegistered = false --unregister несуществующего обработчика не вызывает ошибку
+end
+
+event.register(tes3.event.initialized, weather.enable) -- инициализируем при загрузке игры
+
+return weather

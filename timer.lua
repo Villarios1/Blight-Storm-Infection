@@ -14,7 +14,7 @@ local function startInfectionTimer()
 
     -- Запускаем новый таймер с актуальным значением из конфига
     infectionTimer = timer.start({
-        duration = config.duration,
+        duration = config.base.duration,
         iterations = -1, -- бесконечно
         callback = blight.checkBlightInfection
     })

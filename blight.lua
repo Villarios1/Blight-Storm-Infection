@@ -64,7 +64,7 @@ local function calculateHelmetMultiplier(player)
     if armor.parts then
         for _, part in ipairs(armor.parts) do
             if part.type == tes3.activeBodyPart.head then 
-                helmetMultiplier = config.helmetMultiplier
+                helmetMultiplier = config.base.helmetMultiplier
                 break
             end
         end
@@ -75,7 +75,7 @@ end
 
 local function onAttemptedInfection(finalChance, roll)
 	-- Оповещение о попытке заражения
-	if config.displayInfectionAttempts then 
+	if config.base.displayInfectionAttempts then 
 		tes3.messageBox("Шанс: %.2f, Бросок: %d", finalChance, roll)
 	end
 end
@@ -104,12 +104,12 @@ function blight.checkBlightInfection()
     if resist >= 100 then return end
 
     -- 5. Расчет шанса
-    local baseChance = config.baseChance	
+    local baseChance = config.base.baseChance
 	-- Проверка на наличие закрытого шлема
     local helmetMultiplier = calculateHelmetMultiplier(player)
-    
+
     local finalChance = baseChance * (1 - (resist / 100)) * helmetMultiplier
-	
+
 	-- 6. Пытаемся заразить
     local roll = math.random() * 100
 	onAttemptedInfection(finalChance, roll)

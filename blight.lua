@@ -49,24 +49,32 @@ end
 local function calculateHelmetMultiplier(player)
 	local helmetMultiplier = 1.0
 
-	local equippedHelmet = tes3.getEquippedItem({ 
+    -- 1. Если множитель 1.0, то не нужно проверять шлем и можно сразу вернуть результат
+    if config.base.helmetMultiplier == 1.0 then
+        return helmetMultiplier
+    end
+
+    -- 2. Проверяем экипирован ли шлем
+	local equippedHelmet = tes3.getEquippedItem({
         actor = player, 
-        objectType = tes3.objectType.armor, 
-        slot = tes3.armorSlot.helmet 
+        objectType = tes3.objectType.armor,
+        slot = tes3.armorSlot.helmet
     })
 
-    if not equippedHelmet then 
+    if not equippedHelmet then
 		return helmetMultiplier
 	end
 
+    -- 3. Проверка наличия частей брони
     local armor = equippedHelmet.object
-    -- Если в шлеме прописана часть тела "Head", он считается закрытым.
-    if armor.parts then
-        for _, part in ipairs(armor.parts) do
-            if part.type == tes3.activeBodyPart.head then 
-                helmetMultiplier = config.base.helmetMultiplier
-                break
-            end
+    if not armor.parts then
+        return helmetMultiplier
+    end
+
+    -- 4. Проверяем, является ли шлем закрытым (заменяет часть тела head)
+    for _, part in ipairs(armor.parts) do
+        if part.type == tes3.activeBodyPart.head then
+            return config.base.helmetMultiplier
         end
     end
 

@@ -49,6 +49,9 @@ local function blightNotification(event)
 	--cellChanged only
 	if (event.eventType == "cellChanged") then
 		if not wasBlight and isBlight then -- В новой ячейке появилась буря
+			-- если загрузились в интерьере, а снаружи буря - уведомление не нужно
+			if tes3.getPlayerCell().isInterior then return end
+
 			onBlightStart()
 			wasBlight = true
 			return
@@ -74,10 +77,10 @@ function weather.enable()
 	event.register(tes3.event.cellChanged, blightNotification)
 
 	-- 3. При каждой загрузке сохранения - обнуляем состояние прошлой бури
-	local function onLoaded()
+	local function onLoad()
 		wasBlight = false
 	end
-	event.register(tes3.event.load, onLoaded)
+	event.register(tes3.event.load, onLoad)
 end
 
 function weather.disable()

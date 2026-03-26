@@ -96,33 +96,30 @@ function blight.checkBlightInfection()
     local mobile = tes3.mobilePlayer
 	if not mobile then return end
 
-    -- 1. Проверка: закончен ли мейнквест (Дагот Ур побежден)
-    if tes3.getJournalIndex{id = "C3_DestroyDagoth"} >= 50 then return end
-
-    -- 2. Проверка: находится ли персонаж на улице
+    -- 1. Проверка: находится ли персонаж на улице
 	local cell = tes3.getPlayerCell()
 	if not cell or cell.isInterior then return end
 
-	-- 3. Проверка погоды (ID 7 — Blight / Моровая буря)
+	-- 2. Проверка погоды (ID 7 — Blight / Моровая буря)
 	local weather = tes3.getCurrentWeather()
 	if not (weather and weather.index == 7) then return end
 
-    -- 4. Проверка на иммунитет
+    -- 3. Проверка на иммунитет
     local resist = mobile.resistBlightDisease
     if resist >= 100 then return end
 
-    -- 5. Расчет шанса
+    -- 4. Расчет шанса
     local baseChance = config.base.baseChance
 	-- Проверка на наличие закрытого шлема
     local helmetMultiplier = calculateHelmetMultiplier(player)
 
     local finalChance = baseChance * (1 - (resist / 100)) * helmetMultiplier
 
-	-- 6. Пытаемся заразить
+	-- 5. Пытаемся заразить
     local roll = math.random() * 100
 	onAttemptedInfection(finalChance, roll)
 
-	-- 7. Если попали в шанс - заражаем персонажа
+	-- 6. Если попали в шанс - заражаем персонажа
     if roll <= finalChance then
 		infectPlayer(player)
     end

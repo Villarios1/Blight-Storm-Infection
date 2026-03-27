@@ -111,7 +111,7 @@ local function registerModConfig()
 
         -- 2.4 Кнопка сброса настроек
 	    weatherCategory:createButton({
-        label = "Восстановить настройки погоды по умолчанию",
+        label = "Восстановить настройки оповещений по умолчанию",
         buttonText = "Сбросить",
 		description = "Чтобы увидеть изменения потребуется перезапустить это меню.",
         callback = function()

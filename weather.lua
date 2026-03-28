@@ -59,6 +59,7 @@ local function blightNotification(event)
 	end
 end
 
+-- ‘ункции управлени€ включением/отключением модул€. ”правл€ютс€ галочкой в mcm.lua. »нициализируютс€ здесь.
 local isRegistered = false -- защита от повторной регистрации
 local weather = {}
 
@@ -93,6 +94,6 @@ function weather.disable()
 	isRegistered = false --unregister несуществующего обработчика не вызывает ошибку
 end
 
-event.register(tes3.event.initialized, weather.enable) -- инициализируем при загрузке игры
+event.register(tes3.event.initialized, weather.enable) -- инициализируем при загрузке (запуске) игры
 
 return weather

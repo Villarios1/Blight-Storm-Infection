@@ -83,7 +83,7 @@ end
 
 local function onAttemptedInfection(finalChance, roll)
 	-- Оповещение о попытке заражения
-	if config.base.displayInfectionAttempts then 
+	if config.base.displayInfectionAttempts then
 		tes3.messageBox("Шанс: %.2f, Бросок: %d", finalChance, roll)
 	end
 end

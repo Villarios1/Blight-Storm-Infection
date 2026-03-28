@@ -1,5 +1,3 @@
-local configPath = "BlightStormInfection"
-
 local defaultConfig = {
 	base = {
 		baseChance = 10, -- базовый шанс заражения
@@ -8,14 +6,14 @@ local defaultConfig = {
 		displayInfectionAttempts = false, -- отображать попытки заражения
 	},
 	weather = {
-		showWeatherNotifications = true, -- оповещение о начале моровой бури
+		showWeatherNotifications = true, -- оповещение о моровых бурях
 		blightStormStartNotificationText = "Воздух наполняется пеплом и заразой. Начинается моровая буря.",
 		blightStormEndNotificationText = "Небо проясняется, и дышать становится легче. Моровая буря наконец утихла."
 	}
 }
 
+local configPath = "BlightStormInfection"
 local config = mwse.loadConfig(configPath, defaultConfig)
-
 -- Ссылка на стандартные настройки (из этого файла) в объекте конфига, чтобы к ним был доступ в MCM
 config.defaultConfig = defaultConfig
 

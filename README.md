@@ -1,4 +1,4 @@
-Это MWSE-скрипт для русской версии Morrowind.
+Это MWSE-lua скрипт для русской версии Morrowind.
 
 ## **Что он делает:**
  - Моровые бури в игре могут заразить игрока моровыми болезнями, пока он в них находится. Сопротивления моровым болезням снижают вероятность заражения.
@@ -10,7 +10,8 @@
 Разместите файлы .lua в Morrowind\Data Files\mwse\mods\BlightStormInfection (создайте папку BlightStormInfection).
 
 ### **Зависимости:**
-Наверняка для работы необходим MWSE и Morrowind.
+Необходима русская версия игры Morrowind на оригинальном движке (не OpenMW) и MWSE 2.1+ версии для поддержки lua.  
+[Ссылка на MGE XE, в комплекте с которым идет MWSE](https://www.nexusmods.com/morrowind/mods/41102)
 
 ## **Удаление**
 Удалите папку Morrowind\Data Files\mwse\mods\BlightStormInfection и файл Morrowind\Data Files\mwse\config\BlightStormInfection.JSON

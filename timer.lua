@@ -12,13 +12,13 @@ local function stopInfectionTimer()
 end
 
 local function startInfectionTimer()
-    -- Если Дагот Ур побежден - моровых бурь нет, таймер не нужен
+    -- Р•СЃР»Рё Р”Р°РіРѕС‚ РЈСЂ РїРѕР±РµР¶РґРµРЅ - РјРѕСЂРѕРІС‹С… Р±СѓСЂСЊ РЅРµС‚, С‚Р°Р№РјРµСЂ РЅРµ РЅСѓР¶РµРЅ
     if tes3.getJournalIndex{id = "C3_DestroyDagoth"} >= 50 then return end
 
-    -- Запускаем новый таймер с актуальным значением из конфига
+    -- Р—Р°РїСѓСЃРєР°РµРј РЅРѕРІС‹Р№ С‚Р°Р№РјРµСЂ СЃ Р°РєС‚СѓР°Р»СЊРЅС‹Рј Р·РЅР°С‡РµРЅРёРµРј РёР· РєРѕРЅС„РёРіР°
     infectionTimer = timer.start({
         duration = config.base.duration,
-        iterations = -1, -- бесконечно
+        iterations = -1, -- Р±РµСЃРєРѕРЅРµС‡РЅРѕ
         callback = blight.checkBlightInfection
     })
 end
@@ -28,8 +28,8 @@ local function updateInfectionTimer()
     startInfectionTimer()
 end
 
--- При загрузке сохранения запускаем таймер
+-- РџСЂРё Р·Р°РіСЂСѓР·РєРµ СЃРѕС…СЂР°РЅРµРЅРёСЏ Р·Р°РїСѓСЃРєР°РµРј С‚Р°Р№РјРµСЂ
 event.register("loaded", updateInfectionTimer)
 
--- Обновляем таймер по запросу из MCM после сохранения настроек
+-- РћР±РЅРѕРІР»СЏРµРј С‚Р°Р№РјРµСЂ РїРѕ Р·Р°РїСЂРѕСЃСѓ РёР· MCM РїРѕСЃР»Рµ СЃРѕС…СЂР°РЅРµРЅРёСЏ РЅР°СЃС‚СЂРѕРµРє
 event.register("BlightStormInfection:UpdateTimer", updateInfectionTimer)

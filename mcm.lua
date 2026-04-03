@@ -1,24 +1,25 @@
 local config = require("BlightStormInfection.config")
--- Включаем модуль оповещения о погоде, если он есть
+local i18n = config.i18n
+-- Р’РєР»СЋС‡Р°РµРј РјРѕРґСѓР»СЊ РѕРїРѕРІРµС‰РµРЅРёСЏ Рѕ РїРѕРіРѕРґРµ, РµСЃР»Рё РѕРЅ РµСЃС‚СЊ
 local isWeatherModuleAvailable, weatherModule = pcall(require, "BlightStormInfection.weather")
 
 local function registerModConfig()
     local template = mwse.mcm.createTemplate("Blight Storm Infection")
 
-	-- При закрытии сохраняем файл JSON и кидаем сигнал чтобы timer.lua обновил таймер
+	-- РџСЂРё Р·Р°РєСЂС‹С‚РёРё СЃРѕС…СЂР°РЅСЏРµРј С„Р°Р№Р» JSON Рё РєРёРґР°РµРј СЃРёРіРЅР°Р» С‡С‚РѕР±С‹ timer.lua РѕР±РЅРѕРІРёР» С‚Р°Р№РјРµСЂ
     template.onClose = function()
 		mwse.saveConfig("BlightStormInfection", config)
         event.trigger("BlightStormInfection:UpdateTimer")
     end
 
-    -- 1. Базовые настройки
-    local basePage = template:createSideBarPage({ label = "Базовые настройки" })
-    local baseCategory = basePage:createCategory("Параметры")
+    -- 1. Р‘Р°Р·РѕРІС‹Рµ РЅР°СЃС‚СЂРѕР№РєРё
+    local basePage = template:createSideBarPage({ label = i18n("base_page_label") })
+    local baseCategory = basePage:createCategory(i18n("base_category_label"))
 
-    -- 1.1 Базовый шанс
+    -- 1.1 Р‘Р°Р·РѕРІС‹Р№ С€Р°РЅСЃ
     baseCategory:createSlider({
-        label = "Базовый шанс заражения (0-100%)",
-		description = "Базовый шанс заражения персонажа моровой болезнью во время нахождения в моровой буре.",
+        label = i18n("base_chance_label"),
+		description = i18n("base_chance_description"),
         min = 0,
         max = 100,
         step = 1,
@@ -26,24 +27,22 @@ local function registerModConfig()
         variable = mwse.mcm.createTableVariable{ id = "baseChance", table = config.base }
     })
 
-    -- 1.2 Множитель шлема
+    -- 1.2 РњРЅРѕР¶РёС‚РµР»СЊ С€Р»РµРјР°
     baseCategory:createSlider({
-        label = "Множитель закрытого шлема",
-        description = "Базовый шанс заражения будет умножен на это значение, если надет "..
-        "закрытый шлем (полностью заменяющий часть тела head).\n"..
-        "Чтобы отключить влияние шлема на шанс заражения - установите множитель в значение 1.00.",
+        label = i18n("closed_helmet_multiplier_label"),
+        description = i18n("closed_helmet_multiplier_description"),
 		min = 0,
         max = 1,
         step = 0.01,
-        jump = 0.05, -- Кнопки будут менять значение на 0.05 при зажатом Shift или по клику
+        jump = 0.05, -- РљРЅРѕРїРєРё Р±СѓРґСѓС‚ РјРµРЅСЏС‚СЊ Р·РЅР°С‡РµРЅРёРµ РЅР° 0.05 РїСЂРё Р·Р°Р¶Р°С‚РѕРј Shift РёР»Рё РїРѕ РєР»РёРєСѓ
         decimalPlaces = 2,
         variable = mwse.mcm.createTableVariable{ id = "helmetMultiplier", table = config.base }
     })
 
-	-- 1.3 Интервал проверки
+	-- 1.3 РРЅС‚РµСЂРІР°Р» РїСЂРѕРІРµСЂРєРё
     baseCategory:createSlider({
-        label = "Интервал проверки в секундах",
-        description = "Как часто скрипт проверяет шанс заражения.",
+        label = i18n("check_interval_label"),
+        description = i18n("check_interval_description"),
         min = 1,
         max = 120,
         step = 1,
@@ -51,40 +50,40 @@ local function registerModConfig()
         variable = mwse.mcm.createTableVariable{ id = "duration", table = config.base }
     })
 
-	-- 1.4 Включение/выключение попыток заражения
+	-- 1.4 Р’РєР»СЋС‡РµРЅРёРµ/РІС‹РєР»СЋС‡РµРЅРёРµ РїРѕРїС‹С‚РѕРє Р·Р°СЂР°Р¶РµРЅРёСЏ
     baseCategory:createOnOffButton({
-        label = "Отображение попыток заражения",
-        description = "Отображать шанс и результат проверки на заражение при каждой попытке заразить персонажа.",
+        label = i18n("display_infection_attempts_label"),
+        description = i18n("display_infection_attempts_description"),
         variable = mwse.mcm.createTableVariable{ id = "displayInfectionAttempts", table = config.base }
     })
 
-	-- 1.5. Кнопка сброса настроек
+	-- 1.5. РљРЅРѕРїРєР° СЃР±СЂРѕСЃР° РЅР°СЃС‚СЂРѕРµРє
 	baseCategory:createButton({
-        label = "Восстановить базовые настройки по умолчанию",
-        buttonText = "Сбросить",
-		description = "Чтобы увидеть изменения потребуется перезапустить это меню.",
+        label = i18n("reset_base_button_label"),
+        buttonText = i18n("reset_base_button_text"),
+		description = i18n("reset_button_description"),
         callback = function()
             for key, value in pairs(config.defaultConfig.base) do
                 config.base[key] = value
             end
-            tes3.messageBox("Настройки сброшены. Перезапустите это меню для отображения изменений.")
+            tes3.messageBox(i18n("reset_base_button_messageBox"))
         end
     })
 
-    -- 2. Оповещения о смене погоды
-    local weatherPage = template:createSideBarPage({ label = "Настройки оповещений" })
-    local weatherCategory = weatherPage:createCategory("Параметры")
+    -- 2. РћРїРѕРІРµС‰РµРЅРёСЏ Рѕ СЃРјРµРЅРµ РїРѕРіРѕРґС‹
+    local weatherPage = template:createSideBarPage({ label = i18n("weather_page_label") })
+    local weatherCategory = weatherPage:createCategory(i18n("weather_category_label"))
 
     if not isWeatherModuleAvailable then
         weatherCategory:createInfo{
-            label = "Модуль погоды не найден",
-            description = "Настройки, связанные с оповещениями о погоде недоступны."
+            label = i18n("weather_module_not_found_label"),
+            description = i18n("weather_module_not_found_description")
         }
     else
-        -- 2.1 Включение/выключение оповещений
+        -- 2.1 Р’РєР»СЋС‡РµРЅРёРµ/РІС‹РєР»СЋС‡РµРЅРёРµ РѕРїРѕРІРµС‰РµРЅРёР№
         weatherCategory:createYesNoButton({
-            label = "Включить оповещения о моровой буре",
-            description = "Показывать оповещение в нижней части экрана о начале и окончании моровой бури.",
+            label = i18n("toggle_blight_notifications_label"),
+            description = i18n("toggle_blight_notifications_description"),
             variable = mwse.mcm.createTableVariable{ id = "showWeatherNotifications", table = config.weather },
             callback = function()
                 if config.weather.showWeatherNotifications then
@@ -95,30 +94,33 @@ local function registerModConfig()
             end
         })
 
-        -- 2.2 Текст оповещения о начале моровой бури
+        -- 2.2 РўРµРєСЃС‚ РѕРїРѕРІРµС‰РµРЅРёСЏ Рѕ РЅР°С‡Р°Р»Рµ РјРѕСЂРѕРІРѕР№ Р±СѓСЂРё
         weatherCategory:createTextField({
-            label = "Текст оповещения о начале моровой бури:",
-            description = "Введите текст, который будет отображаться при начале моровой бури.",
-            variable = mwse.mcm.createTableVariable{ id = "blightStormStartNotificationText", table = config.weather }
+            label = i18n("blight_start_label"),
+            description = i18n("blight_start_description"),
+            variable = mwse.mcm.createTableVariable{
+                id = "blightStormStartNotificationText",
+                table = config.weather
+            }
         })
 
-	    -- 2.3 Текст оповещения об окончании моровой бури
+	    -- 2.3 РўРµРєСЃС‚ РѕРїРѕРІРµС‰РµРЅРёСЏ РѕР± РѕРєРѕРЅС‡Р°РЅРёРё РјРѕСЂРѕРІРѕР№ Р±СѓСЂРё
 	    weatherCategory:createTextField({
-            label = "Текст завершения бури:",
-		    description = "Введите текст, который будет отображаться при завершении моровой бури.",
+            label = i18n("blight_end_label"),
+		    description = i18n("blight_end_description"),
             variable = mwse.mcm.createTableVariable{ id = "blightStormEndNotificationText", table = config.weather }
         })
 
-        -- 2.4 Кнопка сброса настроек
+        -- 2.4 РљРЅРѕРїРєР° СЃР±СЂРѕСЃР° РЅР°СЃС‚СЂРѕРµРє
 	    weatherCategory:createButton({
-        label = "Восстановить настройки оповещений по умолчанию",
-        buttonText = "Сбросить",
-		description = "Чтобы увидеть изменения потребуется перезапустить это меню.",
+        label = i18n("reset_weather_button_label"),
+        buttonText = i18n("reset_weather_button_text"),
+		description = i18n("reset_weather_button_description"),
         callback = function()
             for key, value in pairs(config.defaultConfig.weather) do
                 config.weather[key] = value
             end
-            tes3.messageBox("Настройки сброшены. Перезапустите это меню для отображения изменений.")
+            tes3.messageBox(i18n("reset_weather_button_messageBox"))
         end
     })
     end

@@ -1,21 +1,30 @@
+local i18n = mwse.loadTranslations("BlightStormInfection")
+
 local defaultConfig = {
 	base = {
-		baseChance = 10, -- базовый шанс заражения
-		helmetMultiplier = 0.5, -- уменьшение базового шанса заражения от ношения закрытого шлема
-		duration = 10, -- интервал в секундах между проверками
-		displayInfectionAttempts = false, -- отображать попытки заражения
+		baseChance = 10, -- Р±Р°Р·РѕРІС‹Р№ С€Р°РЅСЃ Р·Р°СЂР°Р¶РµРЅРёСЏ
+		helmetMultiplier = 0.5, -- СѓРјРµРЅСЊС€РµРЅРёРµ Р±Р°Р·РѕРІРѕРіРѕ С€Р°РЅСЃР° Р·Р°СЂР°Р¶РµРЅРёСЏ РѕС‚ РЅРѕС€РµРЅРёСЏ Р·Р°РєСЂС‹С‚РѕРіРѕ С€Р»РµРјР°
+		duration = 10, -- РёРЅС‚РµСЂРІР°Р» РІ СЃРµРєСѓРЅРґР°С… РјРµР¶РґСѓ РїСЂРѕРІРµСЂРєР°РјРё
+		displayInfectionAttempts = false, -- РѕС‚РѕР±СЂР°Р¶Р°С‚СЊ РїРѕРїС‹С‚РєРё Р·Р°СЂР°Р¶РµРЅРёСЏ
 	},
 	weather = {
-		showWeatherNotifications = true, -- оповещение о моровых бурях
-		blightStormStartNotificationText = "Воздух наполняется пеплом и заразой. Начинается моровая буря.",
-		blightStormEndNotificationText = "Небо проясняется, и дышать становится легче. Моровая буря наконец утихла."
+		showWeatherNotifications = true, -- РѕРїРѕРІРµС‰РµРЅРёРµ Рѕ РјРѕСЂРѕРІС‹С… Р±СѓСЂСЏС…
+		blightStormStartNotificationText = i18n("blight_start_notification_text"),
+		blightStormEndNotificationText = i18n("blight_end_notification_text")
 	}
 }
 
+-- Р—Р°РіСЂСѓР·РєР° СЃСѓС‰РµСЃС‚РІСѓСЋС‰РµРіРѕ РєРѕРЅС„РёРіР° JSON, РёР»Рё РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ СЃС‚Р°РЅРґР°СЂС‚РЅРѕРіРѕ
 local configPath = "BlightStormInfection"
 local config = mwse.loadConfig(configPath, defaultConfig)
--- Ссылка на стандартные настройки (из этого файла) в объекте конфига, чтобы к ним был доступ в MCM
-config.defaultConfig = defaultConfig
 
--- Загрузка существующего конфига JSON, или использование стандартного
+-- РњРµС‚Р°С‚Р°Р±Р»РёС†Р° - РїСЂСЏРјРѕР№ РґРѕСЃС‚СѓРї (РЅР°РїСЂ config.i18n), РЅРѕ MWSE РЅРµ Р±СѓРґРµС‚ Р·Р°СЃРѕСЂСЏС‚СЊ СЌС‚РёРј СЃРІРѕР№ JSON-С„Р°Р№Р»
+local metadata = {
+	-- РЎСЃС‹Р»РєР° РЅР° РґР°РЅРЅС‹Рµ С‚РµРєСѓС‰РµР№ Р»РѕРєР°Р»РёР·Р°С†РёРё
+    i18n = i18n,
+	-- РЎСЃС‹Р»РєР° РЅР° СЃС‚Р°РЅРґР°СЂС‚РЅС‹Рµ РЅР°СЃС‚СЂРѕР№РєРё (РёР· СЌС‚РѕРіРѕ С„Р°Р№Р»Р°) РІ РѕР±СЉРµРєС‚Рµ РєРѕРЅС„РёРіР°, С‡С‚РѕР±С‹ Рє РЅРёРј Р±С‹Р» РґРѕСЃС‚СѓРї РІ MCM
+    defaultConfig = defaultConfig
+}
+setmetatable(config, { __index = metadata })
+
 return config

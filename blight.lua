@@ -1,6 +1,7 @@
 local config = require("BlightStormInfection.config")
+local i18n = config.i18n
 
--- Список ID моровых болезней
+-- РЎРїРёСЃРѕРє ID РјРѕСЂРѕРІС‹С… Р±РѕР»РµР·РЅРµР№
 local blightDiseases = {
     "ash-chancre",
     "black-heart blight",
@@ -9,7 +10,7 @@ local blightDiseases = {
 }
 
 local function checkDiseases(player)
-    -- Собираем список болезней, которыми персонаж еще не болен
+    -- РЎРѕР±РёСЂР°РµРј СЃРїРёСЃРѕРє Р±РѕР»РµР·РЅРµР№, РєРѕС‚РѕСЂС‹РјРё РїРµСЂСЃРѕРЅР°Р¶ РµС‰Рµ РЅРµ Р±РѕР»РµРЅ
     local availableDiseases = {}
 
 	for _, id in ipairs(blightDiseases) do
@@ -18,7 +19,7 @@ local function checkDiseases(player)
 		end
 	end
 
-	-- Выбираем случайно одну из отсутствующих болезней
+	-- Р’С‹Р±РёСЂР°РµРј СЃР»СѓС‡Р°Р№РЅРѕ РѕРґРЅСѓ РёР· РѕС‚СЃСѓС‚СЃС‚РІСѓСЋС‰РёС… Р±РѕР»РµР·РЅРµР№
 	local diseaseObj
     if #availableDiseases > 0 then
         local diseaseID = availableDiseases[math.random(#availableDiseases)]
@@ -30,16 +31,15 @@ end
 
 local function onInfection(diseaseObj)
 	tes3.messageBox(
-		"Вы заразились моровой болезнью: %s",
-		diseaseObj.name
+		i18n("on_infection", { diseaseName = diseaseObj.name })
 	)
 end
 
 local function infectPlayer(player)
-	-- Ищем болезнь, которой еще нет у персонажа
+	-- РС‰РµРј Р±РѕР»РµР·РЅСЊ, РєРѕС‚РѕСЂРѕР№ РµС‰Рµ РЅРµС‚ Сѓ РїРµСЂСЃРѕРЅР°Р¶Р°
 	local diseaseObj = checkDiseases(player)
 
-	-- Применяем болезнь к персонажу
+	-- РџСЂРёРјРµРЅСЏРµРј Р±РѕР»РµР·РЅСЊ Рє РїРµСЂСЃРѕРЅР°Р¶Сѓ
     if diseaseObj then
         tes3.addSpell({ reference = player, spell = diseaseObj })
 		onInfection(diseaseObj)
@@ -49,12 +49,12 @@ end
 local function calculateHelmetMultiplier(player)
 	local helmetMultiplier = 1.0
 
-    -- 1. Если множитель 1.0, то не нужно проверять шлем и можно сразу вернуть результат
+    -- 1. Р•СЃР»Рё РјРЅРѕР¶РёС‚РµР»СЊ 1.0, С‚Рѕ РЅРµ РЅСѓР¶РЅРѕ РїСЂРѕРІРµСЂСЏС‚СЊ С€Р»РµРј Рё РјРѕР¶РЅРѕ СЃСЂР°Р·Сѓ РІРµСЂРЅСѓС‚СЊ СЂРµР·СѓР»СЊС‚Р°С‚
     if config.base.helmetMultiplier == 1.0 then
         return helmetMultiplier
     end
 
-    -- 2. Проверяем экипирован ли шлем
+    -- 2. РџСЂРѕРІРµСЂСЏРµРј СЌРєРёРїРёСЂРѕРІР°РЅ Р»Рё С€Р»РµРј
 	local equippedHelmet = tes3.getEquippedItem({
         actor = player, 
         objectType = tes3.objectType.armor,
@@ -65,13 +65,13 @@ local function calculateHelmetMultiplier(player)
 		return helmetMultiplier
 	end
 
-    -- 3. Проверка наличия частей брони
+    -- 3. РџСЂРѕРІРµСЂРєР° РЅР°Р»РёС‡РёСЏ С‡Р°СЃС‚РµР№ Р±СЂРѕРЅРё
     local armor = equippedHelmet.object
     if not armor.parts then
         return helmetMultiplier
     end
 
-    -- 4. Проверяем, является ли шлем закрытым (заменяет часть тела head)
+    -- 4. РџСЂРѕРІРµСЂСЏРµРј, СЏРІР»СЏРµС‚СЃСЏ Р»Рё С€Р»РµРј Р·Р°РєСЂС‹С‚С‹Рј (Р·Р°РјРµРЅСЏРµС‚ С‡Р°СЃС‚СЊ С‚РµР»Р° head)
     for _, part in ipairs(armor.parts) do
         if part.type == tes3.activeBodyPart.head then
             return config.base.helmetMultiplier
@@ -82,9 +82,9 @@ local function calculateHelmetMultiplier(player)
 end
 
 local function onAttemptedInfection(finalChance, roll)
-	-- Оповещение о попытке заражения
+	-- РћРїРѕРІРµС‰РµРЅРёРµ Рѕ РїРѕРїС‹С‚РєРµ Р·Р°СЂР°Р¶РµРЅРёСЏ
 	if config.base.displayInfectionAttempts then
-		tes3.messageBox("Шанс: %.2f, Бросок: %d", finalChance, roll)
+		tes3.messageBox(i18n("roll_info", { chance = string.format("%.2f", finalChance), roll = math.floor(roll) }))
 	end
 end
 
@@ -96,30 +96,30 @@ function blight.checkBlightInfection()
     local mobile = tes3.mobilePlayer
 	if not mobile then return end
 
-    -- 1. Проверка: находится ли персонаж на улице
+    -- 1. РџСЂРѕРІРµСЂРєР°: РЅР°С…РѕРґРёС‚СЃСЏ Р»Рё РїРµСЂСЃРѕРЅР°Р¶ РЅР° СѓР»РёС†Рµ
 	local cell = tes3.getPlayerCell()
 	if not cell or cell.isInterior then return end
 
-	-- 2. Проверка погоды (ID 7 — Blight / Моровая буря)
+	-- 2. РџСЂРѕРІРµСЂРєР° РїРѕРіРѕРґС‹ (ID 7 вЂ” Blight / РњРѕСЂРѕРІР°СЏ Р±СѓСЂСЏ)
 	local weather = tes3.getCurrentWeather()
 	if not (weather and weather.index == 7) then return end
 
-    -- 3. Проверка на иммунитет
+    -- 3. РџСЂРѕРІРµСЂРєР° РЅР° РёРјРјСѓРЅРёС‚РµС‚
     local resist = mobile.resistBlightDisease
     if resist >= 100 then return end
 
-    -- 4. Расчет шанса
+    -- 4. Р Р°СЃС‡РµС‚ С€Р°РЅСЃР°
     local baseChance = config.base.baseChance
-	-- Проверка на наличие закрытого шлема
+	-- РџСЂРѕРІРµСЂРєР° РЅР° РЅР°Р»РёС‡РёРµ Р·Р°РєСЂС‹С‚РѕРіРѕ С€Р»РµРјР°
     local helmetMultiplier = calculateHelmetMultiplier(player)
 
     local finalChance = baseChance * (1 - (resist / 100)) * helmetMultiplier
 
-	-- 5. Пытаемся заразить
+	-- 5. РџС‹С‚Р°РµРјСЃСЏ Р·Р°СЂР°Р·РёС‚СЊ
     local roll = math.random() * 100
 	onAttemptedInfection(finalChance, roll)
 
-	-- 6. Если попали в шанс - заражаем персонажа
+	-- 6. Р•СЃР»Рё РїРѕРїР°Р»Рё РІ С€Р°РЅСЃ - Р·Р°СЂР°Р¶Р°РµРј РїРµСЂСЃРѕРЅР°Р¶Р°
     if roll <= finalChance then
 		infectPlayer(player)
     end

@@ -1,6 +1,6 @@
-require("BlightStormInfection.timer") -- Главный файл. Проверки заражения работают по таймеру
+require("BlightStormInfection.timer") -- Р“Р»Р°РІРЅС‹Р№ С„Р°Р№Р». РџСЂРѕРІРµСЂРєРё Р·Р°СЂР°Р¶РµРЅРёСЏ СЂР°Р±РѕС‚Р°СЋС‚ РїРѕ С‚Р°Р№РјРµСЂСѓ
 
--- Блокируем скрипт BlightStorms из GFM
+-- Р‘Р»РѕРєРёСЂСѓРµРј СЃРєСЂРёРїС‚ BlightStorms РёР· GFM
 local function blockBlightStormScript()
     local script = "BlightStorms"
     if tes3.getLegacyScriptRunning({ script = script }) then
